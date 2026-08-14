@@ -40,3 +40,4 @@ def get_recommended_places(destination):
         return ["Pantai Kuta", "Ubud Monkey Forest", "Tanah Lot"]
     else:
         return ["Pusat Kota", "Museum Lokal", "Pasar Tradisional"]
+
