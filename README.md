@@ -13,3 +13,4 @@ python3 main.py
 ## Versi
 
 - v0.1.0 — Trip Summary Generator (aplikasi konsol)
+- session-2 — Recommendation Engine (kategori, season, daily budget, rekomendasi tempat) 14 Agustus 23:13 
