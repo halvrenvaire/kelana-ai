@@ -41,3 +41,10 @@ def get_recommended_places(destination):
     else:
         return ["Pusat Kota", "Museum Lokal", "Pasar Tradisional"]
 
+def get_all_recommendations():
+    """Mengembalikan daftar semua tempat rekomendasi."""
+    return{"Tokyo Tower" ,"Mount Fuji", "Shibuya"}
+
+def get_transportations():
+    """Mengembalikan daftar moda transportasi."""
+    return{"Bus","Flight","Train"}
