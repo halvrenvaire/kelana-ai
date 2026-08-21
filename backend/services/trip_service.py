@@ -41,10 +41,26 @@ def get_recommended_places(destination):
     else:
         return ["Pusat Kota", "Museum Lokal", "Pasar Tradisional"]
 
-def get_all_recommendations():
+def get_all_recommendations(category=None):
     """Mengembalikan daftar semua tempat rekomendasi."""
-    return{"Tokyo Tower" ,"Mount Fuji", "Shibuya"}
+    places = [
+        {"name": "Tokyo Tower", "price": 30, "category": "mid"},
+        {"name": "Mount Fuji", "price": 50, "category": "premium"},
+        {"name": "Shibuya", "price": 0, "category": "budget"},
+    ]
+    if category is None:
+        return places
+
+    hasil = []
+    for item in places:
+        if item["category"] == category:
+             hasil.append(item)
+    return hasil
+    
+
 
 def get_transportations():
     """Mengembalikan daftar moda transportasi."""
-    return{"Bus","Flight","Train"}
+    return["Bus","Flight","Train"]
+
+
