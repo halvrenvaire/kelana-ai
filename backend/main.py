@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from services.bedrock_service import generate_recommendation
 from services.trip_service import calculate_daily_budget, get_trip_category
@@ -6,6 +7,14 @@ from models.trip import Trip
 from database import SessionLocal, init_db
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 init_db()
 
@@ -131,4 +140,4 @@ def generate_trip_recommendation(trip_id: int):
     db.refresh(trip)
     db.close()
 
-    return trip
+    return trip 
