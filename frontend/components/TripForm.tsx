@@ -17,10 +17,20 @@ const POPULAR_DESTINATIONS = [
   "Istanbul, Turkey",
 ];
 
+const TRAVEL_STYLES = [
+  { value: "backpacker", label: "🎒 Backpacker" },
+  { value: "family",     label: "👨‍👩‍👧 Family" },
+  { value: "romantic",   label: "💑 Romantic" },
+  { value: "adventure",  label: "🧗 Adventure" },
+  { value: "cultural",   label: "🏛️ Cultural" },
+  { value: "balanced",   label: "⚖️ Balanced" },
+];
+
 export default function TripForm({ onSubmit, isLoading }: TripFormProps) {
-  const [destination, setDestination] = useState("");
-  const [days, setDays] = useState("");
-  const [budget, setBudget] = useState("");
+  const [destination, setDestination]   = useState("");
+  const [days, setDays]                 = useState("");
+  const [budget, setBudget]             = useState("");
+  const [travelStyle, setTravelStyle]   = useState("balanced");
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   const filtered = POPULAR_DESTINATIONS.filter((d) =>
@@ -28,25 +38,28 @@ export default function TripForm({ onSubmit, isLoading }: TripFormProps) {
   );
 
   const isValid =
-    destination.trim() !== "" && Number(days) >= 1 && Number(budget) >= 1;
+    destination.trim() !== "" &&
+    Number(days) >= 1 &&
+    Number(budget) >= 1 &&
+    travelStyle !== "";
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!isValid || isLoading) return;
     onSubmit({
-      destination: destination.trim(),
-      days: Number(days),
-      budget: Number(budget),
+      destination:  destination.trim(),
+      days:         Number(days),
+      budget:       Number(budget),
+      travel_style: travelStyle,
     });
   }
 
-  // Budget category hint
   function getBudgetHint(val: number): { label: string; cls: string } | null {
     if (!val) return null;
-    if (val < 500)  return { label: "Budget", cls: "badge badge-budget" };
-    if (val < 1500) return { label: "Mid-range", cls: "badge badge-mid" };
-    if (val < 4000) return { label: "Premium", cls: "badge badge-premium" };
-    return { label: "Luxury", cls: "badge badge-luxury" };
+    if (val < 500)  return { label: "Budget",    cls: "badge badge-budget"  };
+    if (val < 1500) return { label: "Mid-range", cls: "badge badge-mid"     };
+    if (val < 4000) return { label: "Premium",   cls: "badge badge-premium" };
+    return               { label: "Luxury",    cls: "badge badge-luxury"  };
   }
 
   const budgetHint = getBudgetHint(Number(budget));
@@ -65,6 +78,7 @@ export default function TripForm({ onSubmit, isLoading }: TripFormProps) {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
+
         {/* Destinasi */}
         <div className="relative">
           <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
@@ -78,27 +92,19 @@ export default function TripForm({ onSubmit, isLoading }: TripFormProps) {
               type="text"
               placeholder="Contoh: Tokyo, Japan"
               value={destination}
-              onChange={(e) => {
-                setDestination(e.target.value);
-                setShowSuggestions(true);
-              }}
+              onChange={(e) => { setDestination(e.target.value); setShowSuggestions(true); }}
               onFocus={() => setShowSuggestions(true)}
               onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
               disabled={isLoading}
               className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white focus:border-emerald-400 transition disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
-
-          {/* Autocomplete dropdown */}
           {showSuggestions && destination.length > 0 && filtered.length > 0 && (
             <ul className="absolute z-30 mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
               {filtered.map((d) => (
                 <li
                   key={d}
-                  onMouseDown={() => {
-                    setDestination(d);
-                    setShowSuggestions(false);
-                  }}
+                  onMouseDown={() => { setDestination(d); setShowSuggestions(false); }}
                   className="px-4 py-2.5 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 cursor-pointer transition flex items-center gap-2"
                 >
                   <span className="text-emerald-500 text-xs">✈</span>
@@ -109,8 +115,34 @@ export default function TripForm({ onSubmit, isLoading }: TripFormProps) {
           )}
         </div>
 
-        {/* Durasi & Anggaran */}
+        {/* Budget & Days */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Anggaran */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+              Anggaran (USD)
+            </label>
+            <div className="relative">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-bold pointer-events-none">
+                $
+              </span>
+              <input
+                type="number"
+                min="1"
+                placeholder="2000"
+                value={budget}
+                onChange={(e) => setBudget(e.target.value)}
+                disabled={isLoading}
+                className="w-full pl-9 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white focus:border-emerald-400 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              />
+            </div>
+            {budgetHint && (
+              <div className="mt-1.5">
+                <span className={budgetHint.cls}>{budgetHint.label}</span>
+              </div>
+            )}
+          </div>
+
           {/* Jumlah Hari */}
           <div>
             <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
@@ -137,31 +169,30 @@ export default function TripForm({ onSubmit, isLoading }: TripFormProps) {
               </p>
             )}
           </div>
+        </div>
 
-          {/* Anggaran */}
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
-              Anggaran (USD)
-            </label>
-            <div className="relative">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-bold pointer-events-none">
-                $
-              </span>
-              <input
-                type="number"
-                min="1"
-                placeholder="2000"
-                value={budget}
-                onChange={(e) => setBudget(e.target.value)}
+        {/* Travel Style */}
+        <div>
+          <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+            Travel Style
+          </label>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {TRAVEL_STYLES.map((style) => (
+              <button
+                key={style.value}
+                type="button"
+                onClick={() => !isLoading && setTravelStyle(style.value)}
                 disabled={isLoading}
-                className="w-full pl-9 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white focus:border-emerald-400 transition disabled:opacity-50 disabled:cursor-not-allowed"
-              />
-            </div>
-            {budgetHint && (
-              <div className="mt-1.5">
-                <span className={budgetHint.cls}>{budgetHint.label}</span>
-              </div>
-            )}
+                className={`py-2.5 px-3 rounded-xl text-sm font-medium border transition text-left
+                  ${travelStyle === style.value
+                    ? "bg-emerald-50 border-emerald-400 text-emerald-700 ring-1 ring-emerald-400"
+                    : "bg-slate-50 border-slate-200 text-slate-600 hover:border-emerald-300 hover:bg-emerald-50"
+                  }
+                  disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                {style.label}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -184,7 +215,7 @@ export default function TripForm({ onSubmit, isLoading }: TripFormProps) {
             </span>
           ) : (
             <span className="flex items-center justify-center gap-2">
-              ✨ Buat Rencana Perjalanan
+              ✨ Generate AI Trip
             </span>
           )}
         </button>

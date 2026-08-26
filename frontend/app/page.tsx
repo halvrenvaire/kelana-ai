@@ -23,6 +23,7 @@ export interface FormValues {
   destination: string;
   days: number;
   budget: number;
+  travel_style: string;
 }
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";

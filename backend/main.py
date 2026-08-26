@@ -23,6 +23,7 @@ class TripRequest(BaseModel):
     destination: str
     days: int = Field(gt=0)
     budget: float = Field(gt=0)
+    travel_style: str = "balanced"
 
 
 @app.get("/")
@@ -48,6 +49,7 @@ def create_trip(request: TripRequest):
         budget=request.budget,
         category=category,
         daily_budget=daily_budget,
+        travel_style=request.travel_style,
     )
 
     # save to PostgreSQL
@@ -131,7 +133,7 @@ def generate_trip_recommendation(trip_id: int):
         destination=trip.destination,
         days=trip.days,
         budget=trip.budget,
-        travel_style="balanced",
+        travel_style=trip.travel_style or "balanced",
     )
 
     # simpan hasil AI ke database
