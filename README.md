@@ -38,12 +38,15 @@ kelana-ai/
 │       └── bedrock_service.py # Integrasi Amazon Bedrock
 └── frontend/
     ├── app/
-    │   ├── layout.tsx       # Root layout & metadata
-    │   ├── page.tsx         # Halaman utama — state & API orchestration
-    │   └── globals.css      # Global styles & custom Tailwind utilities
+    │   ├── layout.tsx       # Root layout, metadata, global Navbar
+    │   ├── page.tsx         # Halaman utama — form & AI result
+    │   ├── about/           # Halaman tentang
+    │   └── history/         # Trip History Dashboard + detail per trip
     └── components/
+        ├── Navbar.tsx       # Sticky navbar dengan active link indicator
         ├── Hero.tsx         # Hero section dengan background image
         ├── TripForm.tsx     # Form input perjalanan dengan autocomplete
+        ├── TripCard.tsx     # Kartu trip (icon, currency format, badges)
         ├── TripResult.tsx   # Tampilan hasil itinerary AI
         ├── Features.tsx     # Feature cards
         └── Footer.tsx       # Footer navigasi
@@ -181,6 +184,7 @@ Response menyertakan field `ai_recommendation` berisi itinerary harian terstrukt
 | `session-4` | Persistence layer dengan PostgreSQL — CRUD lengkap | 21 Agustus |
 | `session-5` | Integrasi Amazon Bedrock — AI-generated itinerary tersimpan ke database | 24 Agustus |
 | `session-6` | Frontend Next.js — hero image, responsive form, Tailwind styling, footer | 26 Agustus |
+| `session-7` | Trip History Dashboard — TripCard dengan icon, currency format, badges, pagination | 26 Agustus |
 
 ---
 

@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function Footer() {
   return (
     <footer className="w-full border-t border-slate-200 bg-white mt-auto">
-      <div className="mx-auto max-w-2xl px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="mx-auto max-w-5xl px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
         {/* Brand */}
         <div className="flex items-center gap-2">
           <span className="text-sm font-bold text-slate-900">
@@ -16,13 +16,10 @@ export default function Footer() {
         {/* Nav */}
         <nav className="flex items-center gap-1">
           {[
-            { label: "Beranda", href: "/" },
-            { label: "Tentang", href: "/about" },
-            {
-              label: "GitHub",
-              href: "https://github.com/halvrenvaire/kelana-ai",
-              external: true,
-            },
+            { label: "Beranda",  href: "/"        },
+            { label: "History",  href: "/history" },
+            { label: "Tentang",  href: "/about"   },
+            { label: "GitHub",   href: "https://github.com/halvrenvaire/kelana-ai", external: true },
           ].map(({ label, href, external }) => (
             <Link
               key={label}
