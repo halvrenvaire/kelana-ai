@@ -38,11 +38,9 @@ def health_check():
 
 @app.post("/api/v1/trips")
 def create_trip(request: TripRequest):
-    # reuse Session 2 business logic
     daily_budget = calculate_daily_budget(request.budget, request.days)
     category = get_trip_category(request.budget)
 
-    # create a Trip ORM object
     trip = Trip(
         destination=request.destination,
         days=request.days,
@@ -52,7 +50,6 @@ def create_trip(request: TripRequest):
         travel_style=request.travel_style,
     )
 
-    # save to PostgreSQL
     db = SessionLocal()
     db.add(trip)
     db.commit()
@@ -77,9 +74,11 @@ def get_trip(trip_id: int):
     db.close()
 
     if trip is None:
-        raise HTTPException(status_code=404, detail=f"Trip with id {trip_id} not found")
+        raise HTTPException(status_code=404, detail="Trip not found.")
 
     return trip
+
+
 @app.put("/api/v1/trips/{trip_id}")
 def update_trip(trip_id: int, request: TripRequest):
     db = SessionLocal()
@@ -87,14 +86,11 @@ def update_trip(trip_id: int, request: TripRequest):
 
     if trip is None:
         db.close()
-        raise HTTPException(status_code=404, detail=f"Trip with id {trip_id} not found")
+        raise HTTPException(status_code=404, detail="Trip not found.")
 
-    # update field
     trip.destination = request.destination
     trip.days = request.days
     trip.budget = request.budget
-
-    # reuse Session 2 business logic — hitung ulang!
     trip.category = get_trip_category(request.budget)
     trip.daily_budget = calculate_daily_budget(request.budget, request.days)
 
@@ -104,6 +100,7 @@ def update_trip(trip_id: int, request: TripRequest):
 
     return trip
 
+
 @app.delete("/api/v1/trips/{trip_id}")
 def delete_trip(trip_id: int):
     db = SessionLocal()
@@ -111,13 +108,14 @@ def delete_trip(trip_id: int):
 
     if trip is None:
         db.close()
-        raise HTTPException(status_code=404, detail=f"Trip with id {trip_id} not found")
+        raise HTTPException(status_code=404, detail="Trip not found.")
 
     db.delete(trip)
     db.commit()
     db.close()
 
-    return {"message": f"Trip with id {trip_id} deleted successfully"}
+    return {"message": "Trip deleted successfully."}
+
 
 @app.post("/api/v1/trips/{trip_id}/generate")
 def generate_trip_recommendation(trip_id: int):
@@ -126,9 +124,8 @@ def generate_trip_recommendation(trip_id: int):
 
     if trip is None:
         db.close()
-        raise HTTPException(status_code=404, detail=f"Trip with id {trip_id} not found")
+        raise HTTPException(status_code=404, detail="Trip not found.")
 
-    # panggil AI untuk membuat itinerary
     recommendation = generate_recommendation(
         destination=trip.destination,
         days=trip.days,
@@ -136,10 +133,9 @@ def generate_trip_recommendation(trip_id: int):
         travel_style=trip.travel_style or "balanced",
     )
 
-    # simpan hasil AI ke database
     trip.ai_recommendation = recommendation
     db.commit()
     db.refresh(trip)
     db.close()
 
-    return trip 
+    return trip
