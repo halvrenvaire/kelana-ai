@@ -14,11 +14,11 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # ── Password helpers ──────────────────────────────────────────
 def hash_password(plain: str) -> str:
-    return pwd_context.hash(plain)
+    return pwd_context.hash(plain.encode("utf-8")[:72])
 
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(plain, hashed)
+    return pwd_context.verify(plain.encode("utf-8")[:72], hashed)
 
 
 # ── JWT helpers ───────────────────────────────────────────────
