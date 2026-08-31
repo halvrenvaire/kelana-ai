@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Hero from "@/components/Hero";
 import TripForm from "@/components/TripForm";
 import TripResult from "@/components/TripResult";
 import Features from "@/components/Features";
 import Footer from "@/components/Footer";
+import { useAuth } from "@/context/AuthContext";
 
 export type AppState = "idle" | "loading" | "result" | "error";
 
@@ -30,6 +32,9 @@ export interface FormValues {
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 export default function Home() {
+  const { authHeader } = useAuth();
+  const router         = useRouter();
+
   const [appState, setAppState] = useState<AppState>("idle");
   const [tripData, setTripData] = useState<TripData | null>(null);
   const [errorMsg, setErrorMsg] = useState<string>("");
@@ -43,9 +48,14 @@ export default function Home() {
       // Step 1: Buat trip baru
       const createRes = await fetch(`${API_BASE}/api/v1/trips`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeader() },
         body: JSON.stringify(values),
       });
+
+      if (createRes.status === 401) {
+        router.push("/login");
+        return;
+      }
 
       if (!createRes.ok) {
         const err = await createRes.json().catch(() => ({}));
@@ -57,8 +67,16 @@ export default function Home() {
       // Step 2: Generate rekomendasi AI
       const genRes = await fetch(
         `${API_BASE}/api/v1/trips/${created.id}/generate`,
-        { method: "POST" }
+        {
+          method: "POST",
+          headers: authHeader(),
+        }
       );
+
+      if (genRes.status === 401) {
+        router.push("/login");
+        return;
+      }
 
       if (!genRes.ok) {
         const err = await genRes.json().catch(() => ({}));
@@ -85,7 +103,7 @@ export default function Home() {
       {/* Hero */}
       <Hero />
 
-      {/* Main content — floating card overlap */}
+      {/* Main content */}
       <main className="flex-1 w-full px-4 -mt-16 sm:-mt-20 z-20 pb-20">
         <div className="mx-auto w-full max-w-2xl space-y-8">
 
@@ -119,7 +137,7 @@ export default function Home() {
             <TripResult trip={tripData} onReset={handleReset} />
           )}
 
-          {/* Feature Cards — hanya tampil di state idle */}
+          {/* Feature Cards — hanya di state idle */}
           {appState === "idle" && <Features />}
         </div>
       </main>

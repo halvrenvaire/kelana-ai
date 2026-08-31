@@ -185,6 +185,7 @@ Response menyertakan field `ai_recommendation` berisi itinerary harian terstrukt
 | `session-5` | Integrasi Amazon Bedrock — AI-generated itinerary tersimpan ke database | 24 Agustus |
 | `session-6` | Frontend Next.js — hero image, responsive form, Tailwind styling, footer | 26 Agustus |
 | `session-7` | Trip History Dashboard — TripCard dengan icon, currency format, badges, pagination | 26 Agustus |
+| `session-8` | Authentication — JWT, register/login, route protection, trip ownership (403 Forbidden) | 26 Agustus |
 
 ---
 
