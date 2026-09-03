@@ -187,6 +187,7 @@ Response menyertakan field `ai_recommendation` berisi itinerary harian terstrukt
 | `session-7` | Trip History Dashboard — TripCard dengan icon, currency format, badges, pagination | 26 Agustus |
 | `session-8` | Authentication — JWT, register/login, route protection, trip ownership (403 Forbidden) | 26 Agustus |
 | `session-9` | RAG Knowledge Base — kb_service.py, /api/v1/ask, /assistant page, 4 travel docs | 26 Agustus |
+| `session-10` | Chat UX — conversation title, auto-scroll, typing indicator, message timestamp | 4 September |
 
 ---
 

@@ -13,6 +13,7 @@ interface Message {
   text: string;
   sources?: string[];
   loading?: boolean;
+  timestamp: Date;          // ← UX #4: timestamp setiap pesan
 }
 
 const SUGGESTED_QUESTIONS = [
@@ -23,23 +24,48 @@ const SUGGESTED_QUESTIONS = [
   "How can I save money while traveling?",
 ];
 
+// ── Helper: format timestamp ──────────────────────────────────
+function formatTime(date: Date): string {
+  return date.toLocaleTimeString("id-ID", {
+    hour:   "2-digit",
+    minute: "2-digit",
+  });
+}
+
+// ── Helper: generate conversation title dari pertanyaan pertama
+function generateTitle(firstQuestion: string): string {
+  if (firstQuestion.length <= 40) return firstQuestion;
+  return firstQuestion.slice(0, 37) + "…";
+}
+
 export default function AssistantPage() {
-  const { authHeader } = useAuth();
-  const router         = useRouter();
+  const { authHeader, user } = useAuth();
+  const router               = useRouter();
 
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: 0,
-      role: "assistant",
-      text: "Halo! Saya KelanaAI Assistant. Tanya apa saja tentang perjalananmu — Bali, Tokyo, Istanbul, tips budget, dan lainnya. Jawaban saya berdasarkan dokumen travel terpercaya. 🌍",
+      id:        0,
+      role:      "assistant",
+      text:      "Halo! Saya KelanaAI Assistant. Tanya apa saja tentang perjalananmu — Bali, Tokyo, Istanbul, tips budget, dan lainnya. Jawaban saya berdasarkan dokumen travel terpercaya. 🌍",
+      timestamp: new Date(),
     },
   ]);
-  const [input, setInput]     = useState("");
-  const [loading, setLoading] = useState(false);
-  const bottomRef             = useRef<HTMLDivElement>(null);
-  let   nextId                = useRef(1);
 
-  // Auto scroll ke bawah setiap ada pesan baru
+  const [input, setInput]       = useState("");
+  const [loading, setLoading]   = useState(false);
+  const [convTitle, setConvTitle] = useState<string | null>(null); // ← UX #1: conversation title
+  const bottomRef               = useRef<HTMLDivElement>(null);
+  const chatContainerRef        = useRef<HTMLDivElement>(null);
+  const nextId                  = useRef(1);
+
+  // ── UX #2: Auto-scroll — saat pertama buka (scroll ke bawah langsung)
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, []);
+
+  // ── UX #2: Auto-scroll — saat ada pesan baru (smooth)
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -47,16 +73,25 @@ export default function AssistantPage() {
   async function handleAsk(question: string) {
     if (!question.trim() || loading) return;
 
+    // ── UX #1: Set conversation title dari pertanyaan pertama user
+    if (!convTitle) {
+      setConvTitle(generateTitle(question.trim()));
+    }
+
     const userMsg: Message = {
-      id:   nextId.current++,
-      role: "user",
-      text: question.trim(),
+      id:        nextId.current++,
+      role:      "user",
+      text:      question.trim(),
+      timestamp: new Date(),
     };
+
+    // ── UX #3: Typing indicator — pesan loading dari assistant
     const loadingMsg: Message = {
-      id:      nextId.current++,
-      role:    "assistant",
-      text:    "",
-      loading: true,
+      id:        nextId.current++,
+      role:      "assistant",
+      text:      "",
+      loading:   true,
+      timestamp: new Date(),
     };
 
     setMessages((prev) => [...prev, userMsg, loadingMsg]);
@@ -82,7 +117,13 @@ export default function AssistantPage() {
       setMessages((prev) =>
         prev.map((m) =>
           m.loading
-            ? { ...m, loading: false, text: data.answer, sources: data.sources }
+            ? {
+                ...m,
+                loading:   false,
+                text:      data.answer,
+                sources:   data.sources,
+                timestamp: new Date(),  // update timestamp saat jawaban diterima
+              }
             : m
         )
       );
@@ -91,7 +132,7 @@ export default function AssistantPage() {
       setMessages((prev) =>
         prev.map((m) =>
           m.loading
-            ? { ...m, loading: false, text: `⚠ ${errMsg}` }
+            ? { ...m, loading: false, text: `⚠ ${errMsg}`, timestamp: new Date() }
             : m
         )
       );
@@ -105,19 +146,51 @@ export default function AssistantPage() {
     handleAsk(input);
   }
 
+  // Hitung jumlah pesan user (untuk info di header)
+  const userMessageCount = messages.filter((m) => m.role === "user").length;
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
 
       {/* Page header */}
-      <header className="bg-gradient-to-r from-emerald-700 to-emerald-600 px-6 py-8">
+      <header className="bg-gradient-to-r from-emerald-700 to-emerald-600 px-6 py-6">
         <div className="mx-auto max-w-3xl">
-          <div className="flex items-center gap-3 mb-1">
-            <span className="text-2xl">🤖</span>
-            <h1 className="text-xl font-extrabold text-white">KelanaAI Assistant</h1>
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🤖</span>
+              <div>
+                <h1 className="text-xl font-extrabold text-white">KelanaAI Assistant</h1>
+                <p className="text-emerald-100 text-xs mt-0.5">
+                  Powered by Amazon Bedrock RAG · trusted travel documents
+                </p>
+              </div>
+            </div>
+
+            {/* User chip */}
+            {user && (
+              <div className="bg-white/10 border border-white/20 rounded-lg px-3 py-1.5 text-xs text-white/90 shrink-0">
+                👤 {user.username}
+              </div>
+            )}
           </div>
-          <p className="text-emerald-100 text-sm ml-11">
-            Powered by your trusted travel documents · Amazon Bedrock RAG
-          </p>
+
+          {/* ── UX #1: Conversation title ── */}
+          {convTitle && (
+            <div className="mt-4 ml-11 flex items-center gap-2">
+              <span className="text-emerald-300 text-xs">💬</span>
+              <div>
+                <p className="text-xs text-emerald-200 uppercase tracking-wider font-semibold mb-0.5">
+                  Topik percakapan
+                </p>
+                <p className="text-white font-semibold text-sm">{convTitle}</p>
+              </div>
+              {userMessageCount > 0 && (
+                <span className="ml-auto bg-white/10 text-white/80 text-xs px-2 py-0.5 rounded-full">
+                  {userMessageCount} pertanyaan
+                </span>
+              )}
+            </div>
+          )}
         </div>
       </header>
 
@@ -126,50 +199,85 @@ export default function AssistantPage() {
 
           {/* Chat messages */}
           <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-            <div className="p-5 space-y-4 max-h-[500px] overflow-y-auto">
+
+            {/* Chat header bar */}
+            <div className="px-5 py-3 border-b border-slate-100 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span className="text-xs font-semibold text-slate-600">
+                  {convTitle ?? "Percakapan Baru"}
+                </span>
+              </div>
+              <span className="text-xs text-slate-400">
+                {messages.length - 1} pesan
+              </span>
+            </div>
+
+            {/* ── Messages area ── */}
+            <div
+              ref={chatContainerRef}
+              className="p-5 space-y-5 max-h-[520px] overflow-y-auto scroll-smooth"
+            >
               {messages.map((msg) => (
                 <div
                   key={msg.id}
                   className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}
                 >
                   {/* Avatar */}
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-sm
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-sm font-bold
                     ${msg.role === "user"
                       ? "bg-emerald-600 text-white"
                       : "bg-slate-100 text-slate-600"
                     }`}
                   >
-                    {msg.role === "user" ? "👤" : "🤖"}
+                    {msg.role === "user"
+                      ? (user?.username?.charAt(0).toUpperCase() ?? "U")
+                      : "🤖"}
                   </div>
 
-                  {/* Bubble */}
-                  <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm
-                    ${msg.role === "user"
-                      ? "bg-emerald-600 text-white rounded-tr-none"
-                      : "bg-slate-50 border border-slate-200 text-slate-800 rounded-tl-none"
-                    }`}
-                  >
-                    {msg.loading ? (
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce [animation-delay:0ms]" />
-                        <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce [animation-delay:150ms]" />
-                        <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce [animation-delay:300ms]" />
-                      </div>
-                    ) : (
-                      <>
-                        <p className="leading-relaxed whitespace-pre-wrap">{msg.text}</p>
-                        {/* Sources */}
-                        {msg.sources && msg.sources.length > 0 && (
-                          <div className="mt-2 pt-2 border-t border-slate-200">
-                            <p className="text-xs text-slate-400 font-medium mb-1">SOURCE</p>
-                            {msg.sources.map((src) => (
-                              <p key={src} className="text-xs text-emerald-600 font-mono">
-                                📄 {src}
-                              </p>
-                            ))}
+                  {/* Bubble + timestamp */}
+                  <div className={`flex flex-col gap-1 max-w-[80%] ${msg.role === "user" ? "items-end" : "items-start"}`}>
+                    <div className={`rounded-2xl px-4 py-3 text-sm
+                      ${msg.role === "user"
+                        ? "bg-emerald-600 text-white rounded-tr-none"
+                        : "bg-slate-50 border border-slate-200 text-slate-800 rounded-tl-none"
+                      }`}
+                    >
+                      {/* ── UX #3: Typing indicator ── */}
+                      {msg.loading ? (
+                        <div className="flex items-center gap-2 py-1">
+                          <div className="flex items-center gap-1">
+                            <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce [animation-delay:0ms]" />
+                            <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce [animation-delay:150ms]" />
+                            <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce [animation-delay:300ms]" />
                           </div>
-                        )}
-                      </>
+                          <span className="text-xs text-slate-400 italic">KelanaAI sedang mengetik…</span>
+                        </div>
+                      ) : (
+                        <>
+                          <p className="leading-relaxed whitespace-pre-wrap">{msg.text}</p>
+                          {/* Sources */}
+                          {msg.sources && msg.sources.length > 0 && (
+                            <div className="mt-2 pt-2 border-t border-slate-200">
+                              <p className="text-xs text-slate-400 font-semibold mb-1 uppercase tracking-wide">
+                                Source
+                              </p>
+                              {msg.sources.map((src) => (
+                                <p key={src} className="text-xs text-emerald-600 font-mono">
+                                  📄 {src}
+                                </p>
+                              ))}
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+
+                    {/* ── UX #4: Timestamp ── */}
+                    {!msg.loading && (
+                      <span className="text-[10px] text-slate-400 px-1">
+                        {formatTime(msg.timestamp)}
+                      </span>
                     )}
                   </div>
                 </div>
