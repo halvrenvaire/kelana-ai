@@ -5,9 +5,10 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
 const NAV_LINKS = [
-  { label: "Beranda",  href: "/"        },
-  { label: "History",  href: "/history" },
-  { label: "Tentang",  href: "/about"   },
+  { label: "Beranda",   href: "/"          },
+  { label: "Assistant", href: "/assistant" },
+  { label: "History",   href: "/history"   },
+  { label: "Tentang",   href: "/about"     },
 ];
 
 export default function Navbar() {

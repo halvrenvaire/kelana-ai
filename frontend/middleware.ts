@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 // Halaman yang wajib login
-const PROTECTED = ["/", "/history"];
+const PROTECTED = ["/", "/history", "/assistant"];
 
 // Halaman yang tidak boleh diakses kalau sudah login
 const AUTH_ONLY = ["/login", "/register"];

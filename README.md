@@ -186,6 +186,7 @@ Response menyertakan field `ai_recommendation` berisi itinerary harian terstrukt
 | `session-6` | Frontend Next.js — hero image, responsive form, Tailwind styling, footer | 26 Agustus |
 | `session-7` | Trip History Dashboard — TripCard dengan icon, currency format, badges, pagination | 26 Agustus |
 | `session-8` | Authentication — JWT, register/login, route protection, trip ownership (403 Forbidden) | 26 Agustus |
+| `session-9` | RAG Knowledge Base — kb_service.py, /api/v1/ask, /assistant page, 4 travel docs | 26 Agustus |
 
 ---
 

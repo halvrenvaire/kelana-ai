@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel, Field, EmailStr
 from services.bedrock_service import generate_recommendation
+from services.kb_service import ask_knowledge_base
 from services.trip_service import calculate_daily_budget, get_trip_category
 from services.auth_service import (
     hash_password, verify_password,
@@ -42,6 +43,10 @@ class TripRequest(BaseModel):
     travel_style: str = "balanced"
 
 
+class QuestionRequest(BaseModel):
+    question: str
+
+
 # ── Auth dependency ───────────────────────────────────────────
 
 def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
@@ -75,6 +80,28 @@ def read_root():
 @app.get("/health")
 def health_check():
     return {"status": "OK"}
+
+
+# ── Knowledge Base endpoint ───────────────────────────────────
+
+@app.post("/api/v1/ask")
+def ask_endpoint(
+    request: QuestionRequest,
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Kirim pertanyaan ke Bedrock Knowledge Base (RAG).
+    Return jawaban yang grounded dari dokumen travel.
+    """
+    try:
+        result = ask_knowledge_base(request.question)
+        return {
+            "question": request.question,
+            "answer":   result["answer"],
+            "sources":  result["sources"],
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # ── Auth endpoints ────────────────────────────────────────────
