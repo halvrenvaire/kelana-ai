@@ -1,48 +1,39 @@
-type FeatureItem = {
-  emoji: string;
-  judul: string;
-  isi: string;
-};
-
-const daftarFitur: FeatureItem[] = [
+const FEATURES = [
   {
-    emoji: "🗓️",
-    judul: "Itinerary Harian",
-    isi: "Jadwal pagi, siang, dan malam tersusun rapi untuk setiap hari perjalananmu.",
+    icon:  "travel_explore",
+    title: "Daily Itinerary",
+    desc:  "Morning, afternoon & evening schedule — neatly structured for every day of your trip.",
   },
   {
-    emoji: "💰",
-    judul: "Sesuai Anggaran",
-    isi: "Rekomendasi aktivitas dan akomodasi yang menyesuaikan kantongmu secara otomatis.",
+    icon:  "payments",
+    title: "Budget-Optimized",
+    desc:  "Activity and accommodation recommendations automatically calibrated to your budget.",
   },
   {
-    emoji: "🤖",
-    judul: "Ditenagai AI",
-    isi: "Dibuat oleh Amazon Bedrock — fleksibel, kontekstual, bukan template kaku.",
+    icon:  "auto_awesome",
+    title: "Powered by AI",
+    desc:  "Built on Amazon Bedrock — flexible, contextual answers, not rigid templates.",
   },
 ];
-
-function FeatureCard({ emoji, judul, isi }: FeatureItem) {
-  return (
-    <div className="group bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-md hover:border-emerald-200 transition-all p-5 text-center">
-      <div className="w-11 h-11 rounded-xl bg-emerald-50 group-hover:bg-emerald-100 flex items-center justify-center text-2xl mx-auto mb-3 transition-colors">
-        {emoji}
-      </div>
-      <h3 className="font-bold text-slate-900 text-sm mb-1">{judul}</h3>
-      <p className="text-xs text-slate-500 leading-relaxed">{isi}</p>
-    </div>
-  );
-}
 
 export default function Features() {
   return (
     <div className="space-y-3">
-      <p className="text-center text-xs font-semibold text-slate-400 uppercase tracking-widest">
-        Kenapa KelanaAI?
+      <p className="text-center text-xs font-semibold text-[#76777d] uppercase tracking-widest">
+        Why KelanaAI?
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {daftarFitur.map((f) => (
-          <FeatureCard key={f.judul} {...f} />
+        {FEATURES.map((f) => (
+          <div
+            key={f.title}
+            className="group bg-white rounded-2xl border border-[#e0e3e5] shadow-[0_4px_6px_-1px_rgba(15,23,42,0.05)] hover:shadow-md hover:border-[#40c2fd] transition-all p-5 text-center"
+          >
+            <div className="w-11 h-11 rounded-xl bg-[#ECFEFF] group-hover:bg-[#40c2fd]/20 flex items-center justify-center mx-auto mb-3 transition-colors">
+              <span className="material-symbols-outlined text-[#00668a] text-2xl">{f.icon}</span>
+            </div>
+            <h3 className="font-bold text-[#191c1e] text-sm mb-1">{f.title}</h3>
+            <p className="text-xs text-[#45464d] leading-relaxed">{f.desc}</p>
+          </div>
         ))}
       </div>
     </div>

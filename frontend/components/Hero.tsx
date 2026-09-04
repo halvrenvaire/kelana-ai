@@ -1,59 +1,65 @@
 export default function Hero() {
   return (
-    <section className="relative w-full h-[400px] sm:h-[460px] flex flex-col items-center justify-center text-center px-4 overflow-hidden">
-      {/* Background image */}
+    <section className="relative w-full min-h-[85vh] flex flex-col justify-center items-center px-4 md:px-8 py-12 overflow-hidden rounded-b-3xl">
+      {/* Background */}
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=2000&auto=format&fit=crop')`,
+          backgroundImage: `url('https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=2000&auto=format&fit=crop')`,
         }}
       />
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[rgba(247,249,251,0.4)] via-[rgba(247,249,251,0.55)] to-[#f7f9fb]" />
 
-      {/* Gradient overlays — top dark, bottom heavier for card overlap */}
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-900/70 via-slate-900/50 to-slate-900/80" />
+      {/* Hero content */}
+      <div className="relative z-10 flex flex-col items-center text-center max-w-3xl mx-auto gap-6 pt-8">
+        {/* AI chip */}
+        <span className="inline-flex items-center gap-2 bg-[#ECFEFF] text-[#0090a9] px-3 py-1 rounded-full text-xs font-semibold border border-[#0090a9]/20 shadow-sm">
+          <span className="material-symbols-outlined text-base">auto_awesome</span>
+          AI-Powered Travel
+        </span>
 
-      {/* Subtle grid texture overlay */}
-      <div
-        className="absolute inset-0 opacity-10"
-        style={{
-          backgroundImage: `radial-gradient(circle, #ffffff 1px, transparent 1px)`,
-          backgroundSize: "32px 32px",
-        }}
-      />
-
-      {/* Content */}
-      <div className="relative z-10 max-w-xl mx-auto space-y-4">
-        {/* Brand pill */}
-        <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 text-xs font-semibold text-white/90 uppercase tracking-widest">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          Powered by Amazon Bedrock
-        </div>
-
-        {/* Wordmark */}
-        <h1 className="text-5xl sm:text-6xl font-extrabold text-white tracking-tight leading-none">
-          Kelana<span className="text-emerald-400">AI</span>
+        {/* Headline */}
+        <h1 className="text-[40px] md:text-[56px] font-extrabold text-[#191c1e] leading-tight tracking-tight">
+          Plan Your Journey <br className="hidden md:block" />
+          <span className="ai-gradient-text">with AI.</span>
         </h1>
 
-        {/* Tagline */}
-        <p className="text-slate-200 text-sm sm:text-base leading-relaxed max-w-sm mx-auto">
-          Itinerary harian yang tersusun rapi, sesuai anggaranmu — dibuat AI dalam hitungan detik.
+        {/* Subheading */}
+        <p className="text-lg text-[#45464d] max-w-xl leading-relaxed">
+          Experience seamless travel planning. Our intelligent agent curates personalized itineraries,
+          manages budgets, and discovers hidden gems — all tailored to your preferences.
         </p>
 
+        {/* CTAs */}
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto mt-2">
+          <a
+            href="#trip-form"
+            className="bg-[#0f172a] text-white px-8 py-3.5 rounded-xl text-sm font-semibold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 h-12"
+          >
+            Start Planning
+            <span className="material-symbols-outlined text-lg">arrow_forward</span>
+          </a>
+          <a
+            href="/history"
+            className="bg-transparent text-[#00668a] border border-[#00668a] px-8 py-3.5 rounded-xl text-sm font-semibold hover:bg-[#f2f4f6] transition-colors flex items-center justify-center gap-2 h-12"
+          >
+            View Trip History
+          </a>
+        </div>
+
         {/* Destination chips */}
-        <div className="flex flex-wrap justify-center gap-2 pt-1">
-          {["🗼 Tokyo", "🌴 Bali", "🗽 New York", "🏯 Istanbul"].map((dest) => (
+        <div className="flex flex-wrap justify-center gap-2 mt-2">
+          {["🗼 Tokyo", "🌴 Bali", "🗽 New York", "🕌 Istanbul", "🏯 Bangkok"].map((d) => (
             <span
-              key={dest}
-              className="bg-white/10 backdrop-blur-sm border border-white/20 text-white/80 text-xs px-3 py-1 rounded-full"
+              key={d}
+              className="bg-white/70 backdrop-blur-sm border border-[#c6c6cd]/50 text-[#45464d] text-xs px-3 py-1.5 rounded-full font-medium shadow-sm"
             >
-              {dest}
+              {d}
             </span>
           ))}
         </div>
       </div>
-
-      {/* Bottom fade into background color */}
-      <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-slate-50 to-transparent" />
     </section>
   );
 }
