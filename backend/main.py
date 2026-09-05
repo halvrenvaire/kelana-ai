@@ -446,6 +446,10 @@ def send_message(
     db.add(ai_msg)
     db.commit()
     db.refresh(ai_msg)
+    
+    # Simpan conversation title sebelum close db
+    conversation_title = conv.title
+    
     db.close()
 
     return {
@@ -454,7 +458,7 @@ def send_message(
         "content":    ai_answer,
         "sources":    ai_sources,
         "created_at": ai_msg.created_at,
-        "conversation_title": conv.title,
+        "conversation_title": conversation_title,
     }
 
 

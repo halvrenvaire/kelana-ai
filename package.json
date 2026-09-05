@@ -1,0 +1,23 @@
+{
+  "name": "kelana-ai",
+  "version": "1.0.0",
+  "description": "**AI Travel Planner** — dibangun bertahap dari script Python sederhana menjadi full-stack web app dengan REST API, PostgreSQL, Amazon Bedrock, dan Next.js.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/halvrenvaire/kelana-ai.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/halvrenvaire/kelana-ai/issues"
+  },
+  "homepage": "https://github.com/halvrenvaire/kelana-ai#readme",
+  "dependencies": {
+    "@neon/config": "^1.3.0"
+  }
+}

@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 venv/
 .env
+.neon
+node_modules/
+.neon
