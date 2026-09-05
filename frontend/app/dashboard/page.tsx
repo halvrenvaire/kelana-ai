@@ -163,59 +163,97 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-[#f5f7fa]">
+    <div className="flex min-h-screen bg-[#faf8f5]">
       <Sidebar />
 
-      <main className="flex-1 p-8">
-        <div className="max-w-6xl mx-auto space-y-8">
+      <main className="flex-1 p-8 overflow-y-auto">
+        <div className="max-w-7xl mx-auto space-y-8">
           {/* Header */}
-          <div>
-            <h1 className="text-3xl font-bold text-[#131b2e] mb-2">Dashboard</h1>
-            <p className="text-[#76777d]">Selamat datang kembali, {user?.username}! 👋</p>
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0ea5e9] to-[#06b6d4] flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                <span className="material-symbols-outlined text-white text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+                  dashboard
+                </span>
+              </div>
+              <div>
+                <h1 className="text-4xl font-black text-[#0f1419] tracking-tight">Dashboard Overview</h1>
+                <p className="text-[#64748b] font-medium">KelanaAI Travel Planner</p>
+              </div>
+            </div>
+            <p className="text-lg text-[#0f1419] font-semibold">Selamat datang kembali, <span className="text-[#0ea5e9]">{user?.username}</span>! 👋</p>
           </div>
 
           {/* Stats Cards */}
           <div className="grid md:grid-cols-3 gap-6">
             {/* Total Trips */}
-            <div className="bg-white rounded-2xl shadow-sm border border-[#e0e3e5] p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 rounded-xl bg-[#ECFEFF] flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[#00668a] text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>
-                    luggage
-                  </span>
+            <div className="bg-white rounded-3xl shadow-lg shadow-blue-100/50 border border-blue-50 p-7 relative overflow-hidden group hover:shadow-xl hover:shadow-blue-100 transition-all">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#0ea5e9]/10 to-transparent rounded-full -mr-16 -mt-16" />
+              <div className="relative">
+                <div className="flex items-center justify-between mb-5">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#0ea5e9] to-[#06b6d4] flex items-center justify-center shadow-lg shadow-cyan-500/30">
+                    <span className="material-symbols-outlined text-white text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+                      luggage
+                    </span>
+                  </div>
+                  <span className="text-xs font-bold text-[#64748b] bg-[#f1f5f9] px-3 py-1.5 rounded-full">All time</span>
                 </div>
-                <span className="text-xs font-semibold text-[#76777d] bg-[#f5f7fa] px-2 py-1 rounded-full">All time</span>
+                <p className="text-5xl font-black text-[#0f1419] mb-2">{stats.total_trips}</p>
+                <p className="text-sm text-[#64748b] font-semibold uppercase tracking-wide">Total Trips</p>
+                {/* Mini graph placeholder */}
+                <div className="mt-4 flex items-end gap-1 h-8">
+                  {[40, 60, 45, 75, 55, 80, 70].map((h, i) => (
+                    <div key={i} className="flex-1 bg-gradient-to-t from-[#0ea5e9] to-[#06b6d4] rounded-t opacity-30" style={{ height: `${h}%` }} />
+                  ))}
+                </div>
               </div>
-              <p className="text-3xl font-bold text-[#131b2e] mb-1">{stats.total_trips}</p>
-              <p className="text-sm text-[#76777d] font-medium">Total Trips</p>
             </div>
 
             {/* Conversations */}
-            <div className="bg-white rounded-2xl shadow-sm border border-[#e0e3e5] p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 rounded-xl bg-[#FFF4E6] flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[#FF9800] text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>
-                    chat
-                  </span>
+            <div className="bg-white rounded-3xl shadow-lg shadow-orange-100/50 border border-orange-50 p-7 relative overflow-hidden group hover:shadow-xl hover:shadow-orange-100 transition-all">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#f97316]/10 to-transparent rounded-full -mr-16 -mt-16" />
+              <div className="relative">
+                <div className="flex items-center justify-between mb-5">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#f97316] to-[#fb923c] flex items-center justify-center shadow-lg shadow-orange-500/30">
+                    <span className="material-symbols-outlined text-white text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+                      chat
+                    </span>
+                  </div>
+                  <span className="text-xs font-bold text-[#64748b] bg-[#f1f5f9] px-3 py-1.5 rounded-full">Active</span>
                 </div>
-                <span className="text-xs font-semibold text-[#76777d] bg-[#f5f7fa] px-2 py-1 rounded-full">Active</span>
+                <p className="text-5xl font-black text-[#0f1419] mb-2">{stats.total_conversations}</p>
+                <p className="text-sm text-[#64748b] font-semibold uppercase tracking-wide">Conversations</p>
+                {/* Activity indicator */}
+                <div className="mt-4 flex items-center gap-2">
+                  <div className="flex-1 h-2 bg-[#f1f5f9] rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-[#f97316] to-[#fb923c] rounded-full" style={{ width: '60%' }} />
+                  </div>
+                  <span className="text-xs font-bold text-[#f97316]">60%</span>
+                </div>
               </div>
-              <p className="text-3xl font-bold text-[#131b2e] mb-1">{stats.total_conversations}</p>
-              <p className="text-sm text-[#76777d] font-medium">Conversations</p>
             </div>
 
             {/* This Month */}
-            <div className="bg-white rounded-2xl shadow-sm border border-[#e0e3e5] p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 rounded-xl bg-[#F3E8FF] flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[#9333EA] text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>
-                    trending_up
-                  </span>
+            <div className="bg-gradient-to-br from-[#8b5cf6] to-[#a78bfa] rounded-3xl shadow-lg shadow-purple-200/50 p-7 relative overflow-hidden text-white group hover:shadow-xl hover:shadow-purple-200 transition-all">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16" />
+              <div className="relative">
+                <div className="flex items-center justify-between mb-5">
+                  <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-xl">
+                    <span className="material-symbols-outlined text-white text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+                      trending_up
+                    </span>
+                  </div>
+                  <span className="text-xs font-bold bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full">This month</span>
                 </div>
-                <span className="text-xs font-semibold text-[#76777d] bg-[#f5f7fa] px-2 py-1 rounded-full">This month</span>
+                <p className="text-5xl font-black mb-2">{stats.this_month_trips}</p>
+                <p className="text-sm font-semibold uppercase tracking-wide opacity-90">New Trips</p>
+                {/* Sparkline */}
+                <div className="mt-4 flex items-end gap-1 h-8">
+                  {[30, 50, 40, 70, 60, 55, 85].map((h, i) => (
+                    <div key={i} className="flex-1 bg-white/30 rounded-t" style={{ height: `${h}%` }} />
+                  ))}
+                </div>
               </div>
-              <p className="text-3xl font-bold text-[#131b2e] mb-1">{stats.this_month_trips}</p>
-              <p className="text-sm text-[#76777d] font-medium">New Trips</p>
             </div>
           </div>
 
@@ -263,41 +301,122 @@ export default function DashboardPage() {
 
           {/* Quick Actions */}
           <div>
-            <h2 className="text-xl font-bold text-[#131b2e] mb-4">Quick Actions</h2>
-            <div className="grid md:grid-cols-2 gap-4">
+            <h2 className="text-2xl font-black text-[#0f1419] mb-5 flex items-center gap-2">
+              <span className="material-symbols-outlined text-[#0ea5e9]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                bolt
+              </span>
+              Quick Actions
+            </h2>
+            <div className="grid md:grid-cols-2 gap-5">
               <button
                 onClick={() => router.push("/assistant")}
-                className="bg-white rounded-2xl shadow-sm border border-[#e0e3e5] p-6 hover:shadow-md transition text-left group"
+                className="bg-white rounded-2xl shadow-lg shadow-cyan-100/50 border border-cyan-50 p-7 hover:shadow-xl hover:shadow-cyan-100 transition-all text-left group"
               >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#ECFEFF] flex items-center justify-center group-hover:scale-110 transition">
-                    <span className="material-symbols-outlined text-[#00668a] text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+                <div className="flex items-center gap-5">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#0ea5e9] to-[#06b6d4] flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-cyan-500/30">
+                    <span className="material-symbols-outlined text-white text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
                       smart_toy
                     </span>
                   </div>
                   <div>
-                    <h3 className="font-bold text-[#131b2e] mb-1">AI Assistant</h3>
-                    <p className="text-xs text-[#76777d]">Tanya AI tentang destinasi wisata</p>
+                    <h3 className="font-black text-[#0f1419] mb-1 text-lg">AI Assistant</h3>
+                    <p className="text-sm text-[#64748b] font-medium">Tanya AI tentang destinasi wisata</p>
                   </div>
                 </div>
               </button>
 
               <button
                 onClick={() => router.push("/history")}
-                className="bg-white rounded-2xl shadow-sm border border-[#e0e3e5] p-6 hover:shadow-md transition text-left group"
+                className="bg-white rounded-2xl shadow-lg shadow-orange-100/50 border border-orange-50 p-7 hover:shadow-xl hover:shadow-orange-100 transition-all text-left group"
               >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[#FFF4E6] flex items-center justify-center group-hover:scale-110 transition">
-                    <span className="material-symbols-outlined text-[#FF9800] text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+                <div className="flex items-center gap-5">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#f97316] to-[#fb923c] flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-orange-500/30">
+                    <span className="material-symbols-outlined text-white text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
                       history
                     </span>
                   </div>
                   <div>
-                    <h3 className="font-bold text-[#131b2e] mb-1">My Trips</h3>
-                    <p className="text-xs text-[#76777d]">Lihat riwayat perjalanan Anda</p>
+                    <h3 className="font-black text-[#0f1419] mb-1 text-lg">My Trips</h3>
+                    <p className="text-sm text-[#64748b] font-medium">Lihat riwayat perjalanan Anda</p>
                   </div>
                 </div>
               </button>
+            </div>
+          </div>
+
+          {/* My Current Trips */}
+          {stats.total_trips > 0 && (
+            <div>
+              <h2 className="text-2xl font-black text-[#0f1419] mb-5 flex items-center gap-2">
+                <span className="material-symbols-outlined text-[#0ea5e9]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                  explore
+                </span>
+                My Current Trips
+              </h2>
+              <div className="grid md:grid-cols-3 gap-5">
+                {/* Trip Card Example - These would be loaded from API */}
+                <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all group cursor-pointer">
+                  <div className="h-48 bg-gradient-to-br from-[#0ea5e9] to-[#06b6d4] relative overflow-hidden">
+                    <div className="absolute inset-0 bg-black/10" />
+                    <div className="absolute bottom-4 left-4 text-white">
+                      <p className="text-2xl font-black">Bali</p>
+                      <p className="text-sm opacity-90">Indonesia</p>
+                    </div>
+                  </div>
+                  <div className="p-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-xs font-bold text-[#64748b] bg-[#f1f5f9] px-3 py-1 rounded-full">5 Days</span>
+                      <span className="text-sm font-bold text-[#0ea5e9]">Rp 5.000.000</span>
+                    </div>
+                    <p className="text-xs text-[#64748b]">Beach & Culture</p>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all group cursor-pointer">
+                  <div className="h-48 bg-gradient-to-br from-[#f97316] to-[#fb923c] relative overflow-hidden">
+                    <div className="absolute inset-0 bg-black/10" />
+                    <div className="absolute bottom-4 left-4 text-white">
+                      <p className="text-2xl font-black">Tokyo</p>
+                      <p className="text-sm opacity-90">Japan</p>
+                    </div>
+                  </div>
+                  <div className="p-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-xs font-bold text-[#64748b] bg-[#f1f5f9] px-3 py-1 rounded-full">7 Days</span>
+                      <span className="text-sm font-bold text-[#f97316]">Rp 15.000.000</span>
+                    </div>
+                    <p className="text-xs text-[#64748b]">Urban Explorer</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Featured Destinations */}
+          <div>
+            <h2 className="text-2xl font-black text-[#0f1419] mb-5 flex items-center gap-2">
+              <span className="material-symbols-outlined text-[#0ea5e9]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                star
+              </span>
+              Featured Upcoming Destinations
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { name: "Machu Picchu", country: "Peru", color: "from-[#8b5cf6] to-[#a78bfa]" },
+                { name: "Santorini", country: "Greece", color: "from-[#0ea5e9] to-[#06b6d4]" },
+                { name: "Iceland", country: "Europe", color: "from-[#10b981] to-[#34d399]" },
+                { name: "Dubai", country: "UAE", color: "from-[#f97316] to-[#fb923c]" }
+              ].map((dest, i) => (
+                <div key={i} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all group cursor-pointer">
+                  <div className={`h-32 bg-gradient-to-br ${dest.color} relative overflow-hidden`}>
+                    <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition" />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
+                      <p className="text-lg font-black">{dest.name}</p>
+                      <p className="text-xs opacity-90">{dest.country}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
