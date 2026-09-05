@@ -11,4 +11,5 @@ class User(Base):
     username        = Column(String,  unique=True, nullable=False)
     hashed_password = Column(String,  nullable=False)
 
-    trips = relationship("Trip", back_populates="owner", cascade="all, delete-orphan")
+    trips         = relationship("Trip",         back_populates="owner", cascade="all, delete-orphan")
+    conversations = relationship("Conversation", back_populates="owner", cascade="all, delete-orphan")

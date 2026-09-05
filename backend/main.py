@@ -1,3 +1,4 @@
+import json
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -11,6 +12,7 @@ from services.auth_service import (
 )
 from models.user import User
 from models.trip import Trip
+from models.conversation import Conversation, Message
 from database import SessionLocal, init_db
 
 app = FastAPI(title="KelanaAI API")
@@ -45,6 +47,10 @@ class TripRequest(BaseModel):
 
 class QuestionRequest(BaseModel):
     question: str
+
+
+class SendMessageRequest(BaseModel):
+    message: str
 
 
 # ── Auth dependency ───────────────────────────────────────────
@@ -299,3 +305,176 @@ def generate_trip_recommendation(
     db.refresh(trip)
     db.close()
     return trip
+
+
+# ── Conversation endpoints ────────────────────────────────────
+
+@app.post("/api/v1/conversations", status_code=status.HTTP_201_CREATED)
+def create_conversation(
+    current_user: User = Depends(get_current_user),
+):
+    """Buat conversation baru (kosong)."""
+    db = SessionLocal()
+    conv = Conversation(user_id=current_user.id, title="New Conversation")
+    db.add(conv)
+    db.commit()
+    db.refresh(conv)
+    db.close()
+    return {
+        "id":         conv.id,
+        "title":      conv.title,
+        "created_at": conv.created_at,
+        "messages":   [],
+    }
+
+
+@app.get("/api/v1/conversations")
+def list_conversations(
+    current_user: User = Depends(get_current_user),
+):
+    """List semua conversation milik user, terbaru di atas."""
+    db = SessionLocal()
+    convs = (
+        db.query(Conversation)
+        .filter(Conversation.user_id == current_user.id)
+        .order_by(Conversation.updated_at.desc())
+        .all()
+    )
+    db.close()
+    return [
+        {"id": c.id, "title": c.title, "created_at": c.created_at}
+        for c in convs
+    ]
+
+
+@app.get("/api/v1/conversations/{conv_id}")
+def get_conversation(
+    conv_id: int,
+    current_user: User = Depends(get_current_user),
+):
+    """Ambil conversation beserta semua messages-nya."""
+    db = SessionLocal()
+    conv = db.query(Conversation).filter(Conversation.id == conv_id).first()
+
+    if conv is None:
+        db.close()
+        raise HTTPException(status_code=404, detail="Conversation tidak ditemukan.")
+    if conv.user_id != current_user.id:
+        db.close()
+        raise HTTPException(status_code=403, detail="Akses ditolak.")
+
+    result = {
+        "id":         conv.id,
+        "title":      conv.title,
+        "created_at": conv.created_at,
+        "messages": [
+            {
+                "id":         m.id,
+                "role":       m.role,
+                "content":    m.content,
+                "sources":    json.loads(m.sources) if m.sources else [],
+                "created_at": m.created_at,
+            }
+            for m in conv.messages
+        ],
+    }
+    db.close()
+    return result
+
+
+@app.post("/api/v1/conversations/{conv_id}/messages")
+def send_message(
+    conv_id: int,
+    request: SendMessageRequest,
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Kirim pesan ke conversation.
+    Flow:
+    1. Simpan pesan user ke DB
+    2. Load semua history messages
+    3. Kirim ke KB (RAG) dengan konteks history
+    4. Simpan response AI ke DB
+    5. Return response + sources
+    """
+    db = SessionLocal()
+
+    # Validasi conversation
+    conv = db.query(Conversation).filter(Conversation.id == conv_id).first()
+    if conv is None:
+        db.close()
+        raise HTTPException(status_code=404, detail="Conversation tidak ditemukan.")
+    if conv.user_id != current_user.id:
+        db.close()
+        raise HTTPException(status_code=403, detail="Akses ditolak.")
+
+    # Step 1: Simpan pesan user
+    user_msg = Message(
+        conversation_id=conv_id,
+        role="user",
+        content=request.message,
+    )
+    db.add(user_msg)
+    db.commit()
+    db.refresh(user_msg)
+
+    # Step 2: Update conversation title dari pesan pertama user
+    if conv.title == "New Conversation":
+        title = request.message[:60] + ("…" if len(request.message) > 60 else "")
+        conv.title = title
+        db.commit()
+
+    # Step 3: Load semua history untuk konteks
+    history = db.query(Message).filter(Message.conversation_id == conv_id).order_by(Message.id).all()
+
+    # Step 4: Kirim ke KB dengan konteks history
+    try:
+        result = ask_knowledge_base(request.message)
+        ai_answer  = result["answer"]
+        ai_sources = result["sources"]
+    except Exception as e:
+        db.close()
+        raise HTTPException(status_code=500, detail=str(e))
+
+    # Step 5: Simpan response AI ke DB
+    ai_msg = Message(
+        conversation_id=conv_id,
+        role="assistant",
+        content=ai_answer,
+        sources=json.dumps(ai_sources),
+    )
+    db.add(ai_msg)
+    db.commit()
+    db.refresh(ai_msg)
+    db.close()
+
+    return {
+        "id":         ai_msg.id,
+        "role":       ai_msg.role,
+        "content":    ai_answer,
+        "sources":    ai_sources,
+        "created_at": ai_msg.created_at,
+        "conversation_title": conv.title,
+    }
+
+
+@app.delete("/api/v1/conversations/{conv_id}")
+def delete_conversation(
+    conv_id: int,
+    current_user: User = Depends(get_current_user),
+):
+    """Hapus conversation beserta semua messages-nya."""
+    db = SessionLocal()
+    conv = db.query(Conversation).filter(Conversation.id == conv_id).first()
+
+    if conv is None:
+        db.close()
+        raise HTTPException(status_code=404, detail="Conversation tidak ditemukan.")
+    if conv.user_id != current_user.id:
+        db.close()
+        raise HTTPException(status_code=403, detail="Akses ditolak.")
+
+    db.delete(conv)
+    db.commit()
+    db.close()
+    return {"message": "Conversation berhasil dihapus."}
