@@ -1,148 +1,186 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Hero from "@/components/Hero";
-import TripForm from "@/components/TripForm";
-import TripResult from "@/components/TripResult";
-import Features from "@/components/Features";
-import Footer from "@/components/Footer";
 import { useAuth } from "@/context/AuthContext";
+import { useEffect } from "react";
 
-export type AppState = "idle" | "loading" | "result" | "error";
+export default function LandingPage() {
+  const router = useRouter();
+  const { user } = useAuth();
 
-export interface TripData {
-  id: number;
-  destination: string;
-  days: number;
-  budget: number;
-  category: string;
-  daily_budget: number;
-  travel_style: string | null;
-  ai_recommendation: string | null;
-}
-
-export interface FormValues {
-  destination: string;
-  days: number;
-  budget: number;
-  travel_style: string;
-}
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
-
-export default function Home() {
-  const { authHeader } = useAuth();
-  const router         = useRouter();
-
-  const [appState, setAppState] = useState<AppState>("idle");
-  const [tripData, setTripData] = useState<TripData | null>(null);
-  const [errorMsg, setErrorMsg] = useState<string>("");
-
-  async function handleSubmit(values: FormValues) {
-    setAppState("loading");
-    setErrorMsg("");
-    setTripData(null);
-
-    try {
-      // Step 1: Buat trip baru
-      const createRes = await fetch(`${API_BASE}/api/v1/trips`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", ...authHeader() },
-        body: JSON.stringify(values),
-      });
-
-      if (createRes.status === 401) {
-        router.push("/login");
-        return;
-      }
-
-      if (!createRes.ok) {
-        const err = await createRes.json().catch(() => ({}));
-        throw new Error(err?.detail ?? "Gagal membuat rencana perjalanan.");
-      }
-
-      const created: TripData = await createRes.json();
-
-      // Step 2: Generate rekomendasi AI
-      const genRes = await fetch(
-        `${API_BASE}/api/v1/trips/${created.id}/generate`,
-        {
-          method: "POST",
-          headers: authHeader(),
-        }
-      );
-
-      if (genRes.status === 401) {
-        router.push("/login");
-        return;
-      }
-
-      if (!genRes.ok) {
-        const err = await genRes.json().catch(() => ({}));
-        throw new Error(err?.detail ?? "Gagal menghasilkan itinerary AI.");
-      }
-
-      const withAI: TripData = await genRes.json();
-      setTripData(withAI);
-      setAppState("result");
-    } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : "Terjadi kesalahan.");
-      setAppState("error");
+  // Redirect ke dashboard jika sudah login
+  useEffect(() => {
+    if (user) {
+      router.push("/dashboard");
     }
-  }
-
-  function handleReset() {
-    setAppState("idle");
-    setTripData(null);
-    setErrorMsg("");
-  }
+  }, [user, router]);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Hero */}
-      <Hero />
+    <div className="min-h-screen bg-gradient-to-br from-[#00668a] via-[#40c2fd] to-[#00B4D8] relative overflow-hidden">
+      {/* Decorative Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
+        <div className="absolute top-60 -left-32 w-80 h-80 bg-white/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-white/10 rounded-full blur-3xl" />
+      </div>
 
-      {/* Main content */}
-      <main className="flex-1 w-full px-4 -mt-16 sm:-mt-20 z-20 pb-20">
-        <div className="mx-auto w-full max-w-2xl space-y-8">
+      {/* Navbar */}
+      <nav className="relative z-10 flex items-center justify-between px-6 py-5 max-w-7xl mx-auto">
+        <div className="flex items-center gap-3">
+          <div className="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+            <span className="material-symbols-outlined text-white text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+              flight_takeoff
+            </span>
+          </div>
+          <h1 className="text-2xl font-bold text-white">KelanaAI</h1>
+        </div>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/login"
+            className="px-5 py-2.5 text-sm font-semibold text-white hover:text-white/80 transition"
+          >
+            Masuk
+          </Link>
+          <Link
+            href="/register"
+            className="px-6 py-2.5 bg-white text-[#00668a] rounded-xl text-sm font-bold hover:bg-white/90 transition shadow-lg"
+          >
+            Daftar
+          </Link>
+        </div>
+      </nav>
 
-          {/* Form Card */}
-          {appState !== "result" && (
-            <TripForm
-              onSubmit={handleSubmit}
-              isLoading={appState === "loading"}
-            />
-          )}
+      {/* Hero Section */}
+      <main className="relative z-10 max-w-7xl mx-auto px-6 pt-20 pb-32">
+        <div className="text-center max-w-4xl mx-auto">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full mb-8">
+            <span className="material-symbols-outlined text-white text-base" style={{ fontVariationSettings: "'FILL' 1" }}>
+              auto_awesome
+            </span>
+            <span className="text-sm font-semibold text-white">Powered by AWS Bedrock AI</span>
+          </div>
 
-          {/* Error Banner */}
-          {appState === "error" && (
-            <div className="animate-slide-up rounded-xl bg-red-50 border border-red-200 p-4 flex items-start gap-3">
-              <span className="text-red-500 text-lg mt-0.5">⚠</span>
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-red-700">Oops, ada yang salah!</p>
-                <p className="text-sm text-red-600 mt-0.5">{errorMsg}</p>
-              </div>
-              <button
-                onClick={handleReset}
-                className="text-xs text-red-500 hover:text-red-700 font-medium underline underline-offset-2 shrink-0"
-              >
-                Coba lagi
-              </button>
+          {/* Heading */}
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-white mb-6 leading-tight">
+            Rencanakan Perjalanan
+            <br />
+            <span className="bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
+              dengan AI
+            </span>
+          </h1>
+
+          <p className="text-xl sm:text-2xl text-white/90 mb-12 leading-relaxed max-w-3xl mx-auto">
+            KelanaAI membantu Anda merencanakan liburan impian dengan rekomendasi destinasi, 
+            itinerary, dan budget yang dipersonalisasi menggunakan teknologi AI terdepan.
+          </p>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              href="/register"
+              className="px-8 py-4 bg-white text-[#00668a] rounded-xl text-lg font-bold hover:bg-white/90 transition shadow-2xl flex items-center gap-2 w-full sm:w-auto justify-center"
+            >
+              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
+                rocket_launch
+              </span>
+              Mulai Sekarang Gratis
+            </Link>
+            <Link
+              href="/about"
+              className="px-8 py-4 bg-white/10 backdrop-blur-sm text-white rounded-xl text-lg font-semibold hover:bg-white/20 transition border border-white/30 flex items-center gap-2 w-full sm:w-auto justify-center"
+            >
+              <span className="material-symbols-outlined">info</span>
+              Pelajari Lebih Lanjut
+            </Link>
+          </div>
+        </div>
+
+        {/* Features Grid */}
+        <div className="grid md:grid-cols-3 gap-6 mt-24">
+          {/* Feature 1 */}
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 hover:bg-white/15 transition">
+            <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mb-5">
+              <span className="material-symbols-outlined text-white text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+                smart_toy
+              </span>
             </div>
-          )}
+            <h3 className="text-xl font-bold text-white mb-3">AI Assistant</h3>
+            <p className="text-white/80 leading-relaxed">
+              Tanya AI tentang destinasi wisata, tips perjalanan, dan rekomendasi berdasarkan knowledge base travel terpercaya.
+            </p>
+          </div>
 
-          {/* Result */}
-          {appState === "result" && tripData && (
-            <TripResult trip={tripData} onReset={handleReset} />
-          )}
+          {/* Feature 2 */}
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 hover:bg-white/15 transition">
+            <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mb-5">
+              <span className="material-symbols-outlined text-white text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+                route
+              </span>
+            </div>
+            <h3 className="text-xl font-bold text-white mb-3">Itinerary Cerdas</h3>
+            <p className="text-white/80 leading-relaxed">
+              Generate itinerary harian lengkap dengan estimasi budget, aktivitas, dan rekomendasi tempat wisata yang disesuaikan.
+            </p>
+          </div>
 
-          {/* Feature Cards — hanya di state idle */}
-          {appState === "idle" && <Features />}
+          {/* Feature 3 */}
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 hover:bg-white/15 transition">
+            <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mb-5">
+              <span className="material-symbols-outlined text-white text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+                savings
+              </span>
+            </div>
+            <h3 className="text-xl font-bold text-white mb-3">Budget Planner</h3>
+            <p className="text-white/80 leading-relaxed">
+              Kelola budget perjalanan dengan smart calculator yang membantu Anda travel sesuai kantong tanpa mengorbankan pengalaman.
+            </p>
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-6 mt-20 max-w-3xl mx-auto">
+          <div className="text-center">
+            <p className="text-5xl font-black text-white mb-2">500+</p>
+            <p className="text-white/80 font-medium">Destinasi Wisata</p>
+          </div>
+          <div className="text-center">
+            <p className="text-5xl font-black text-white mb-2">1000+</p>
+            <p className="text-white/80 font-medium">Trip Direncanakan</p>
+          </div>
+          <div className="text-center">
+            <p className="text-5xl font-black text-white mb-2">24/7</p>
+            <p className="text-white/80 font-medium">AI Assistant</p>
+          </div>
+        </div>
+
+        {/* CTA Bottom */}
+        <div className="mt-24 text-center bg-white/10 backdrop-blur-md rounded-2xl p-12 border border-white/20">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+            Siap Menjelajah Dunia?
+          </h2>
+          <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+            Daftar sekarang dan mulai rencanakan perjalanan impian Anda dengan bantuan AI.
+          </p>
+          <Link
+            href="/register"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#00668a] rounded-xl text-lg font-bold hover:bg-white/90 transition shadow-2xl"
+          >
+            Daftar Gratis
+            <span className="material-symbols-outlined">arrow_forward</span>
+          </Link>
         </div>
       </main>
 
-      <Footer />
+      {/* Footer */}
+      <footer className="relative z-10 border-t border-white/10 py-8">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <p className="text-white/60 text-sm">
+            © 2026 KelanaAI. Powered by AWS Bedrock. All rights reserved.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
