@@ -18,6 +18,7 @@ export default function Sidebar() {
     { href: "/dashboard", label: "Dashboard", icon: "dashboard" },
     { href: "/assistant", label: "AI Assistant", icon: "smart_toy" },
     { href: "/history", label: "My Trips", icon: "luggage" },
+    { href: "/settings", label: "Settings", icon: "settings" },
     { href: "/about", label: "About", icon: "info" },
   ];
 

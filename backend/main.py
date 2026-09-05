@@ -482,3 +482,86 @@ def delete_conversation(
     db.commit()
     db.close()
     return {"message": "Conversation berhasil dihapus."}
+
+
+# ──────────────────────────────────────────────────────────────────
+# 🔹 PROFILE / USER SETTINGS ENDPOINTS
+# ──────────────────────────────────────────────────────────────────
+
+class UpdateProfileRequest(BaseModel):
+    username: str | None = None
+    email: str | None = None
+    current_password: str | None = None  # required if changing password
+    new_password: str | None = None
+
+
+@app.get("/api/v1/profile")
+def get_profile(
+    current_user: User = Depends(get_current_user),
+):
+    """Get current user profile."""
+    return {
+        "id": current_user.id,
+        "username": current_user.username,
+        "email": current_user.email,
+    }
+
+
+@app.put("/api/v1/profile")
+def update_profile(
+    req: UpdateProfileRequest,
+    current_user: User = Depends(get_current_user),
+):
+    """Update user profile (username, email, password)."""
+    db = SessionLocal()
+    user = db.query(User).filter(User.id == current_user.id).first()
+    
+    if user is None:
+        db.close()
+        raise HTTPException(status_code=404, detail="User tidak ditemukan.")
+
+    # Update username
+    if req.username and req.username != user.username:
+        # Check if username already taken
+        existing = db.query(User).filter(User.username == req.username).first()
+        if existing:
+            db.close()
+            raise HTTPException(status_code=400, detail="Username sudah dipakai.")
+        user.username = req.username
+
+    # Update email
+    if req.email and req.email != user.email:
+        # Check if email already taken
+        existing = db.query(User).filter(User.email == req.email).first()
+        if existing:
+            db.close()
+            raise HTTPException(status_code=400, detail="Email sudah terdaftar.")
+        user.email = req.email
+
+    # Update password
+    if req.new_password:
+        if not req.current_password:
+            db.close()
+            raise HTTPException(status_code=400, detail="Password lama diperlukan untuk mengubah password.")
+        
+        # Verify current password
+        if not verify_password(req.current_password, user.hashed_password):
+            db.close()
+            raise HTTPException(status_code=400, detail="Password lama salah.")
+        
+        user.hashed_password = hash_password(req.new_password)
+
+    db.commit()
+    db.refresh(user)
+    
+    result = {
+        "message": "Profile berhasil diupdate.",
+        "user": {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+        }
+    }
+    db.close()
+    
+    return result
