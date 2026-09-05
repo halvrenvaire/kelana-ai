@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { AuthProvider } from "@/context/AuthContext";
-import Navbar from "@/components/Navbar";
 import "./globals.css";
+import ConditionalNavbar from "@/components/ConditionalNavbar";
+import BodyWrapper from "@/components/BodyWrapper";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -23,28 +24,15 @@ export const metadata: Metadata = {
   },
 };
 
-"use client";
-
-import { usePathname } from "next/navigation";
-
-function LayoutContent({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const isLandingPage = pathname === "/";
-
-  return (
-    <body className={`min-h-full flex flex-col bg-background text-on-surface ${isLandingPage ? "" : "pt-16 md:pb-0 pb-[72px]"}`}>
-      <AuthProvider>
-        {!isLandingPage && <Navbar />}
-        {children}
-      </AuthProvider>
-    </body>
-  );
-}
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="id" className={`${inter.variable} h-full antialiased`}>
-      <LayoutContent>{children}</LayoutContent>
+      <body className="min-h-full flex flex-col bg-background text-on-surface">
+        <AuthProvider>
+          <ConditionalNavbar />
+          <BodyWrapper>{children}</BodyWrapper>
+        </AuthProvider>
+      </body>
     </html>
   );
 }
