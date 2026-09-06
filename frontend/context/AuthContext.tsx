@@ -26,6 +26,7 @@ interface AuthContextValue {
   register: (email: string, username: string, password: string) => Promise<void>;
   logout: () => void;
   authHeader: () => Record<string, string>;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -54,29 +55,35 @@ function clearToken() {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser]         = useState<AuthUser | null>(null);
   const [token, setToken]       = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false); // Changed from true to false
 
   // Restore session on mount
   useEffect(() => {
     const stored = localStorage.getItem(TOKEN_KEY);
     if (stored) {
       setToken(stored);
-      setTokenCookie(stored); // sync cookie in case it expired
-      fetchMe(stored).finally(() => setIsLoading(false));
-    } else {
-      setIsLoading(false);
+      setTokenCookie(stored);
+      // Don't fetch user immediately, let pages decide if they need user data
     }
   }, []);
 
   async function fetchMe(t: string) {
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
       const res = await fetch(`${API_BASE}/api/v1/auth/me`, {
         headers: { Authorization: `Bearer ${t}` },
+        signal: controller.signal,
       });
+      
+      clearTimeout(timeoutId);
+      
       if (!res.ok) throw new Error("Session expired");
       const data: AuthUser = await res.json();
       setUser(data);
-    } catch {
+    } catch (error) {
+      console.error("Failed to fetch user:", error);
       clearToken();
       setToken(null);
       setUser(null);
@@ -134,8 +141,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return t ? { Authorization: `Bearer ${t}` } : {};
   }, []);
 
+  const refreshUser = useCallback(async () => {
+    const t = token || localStorage.getItem(TOKEN_KEY);
+    if (t) {
+      await fetchMe(t);
+    }
+  }, [token]);
+
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, login, register, logout, authHeader }}>
+    <AuthContext.Provider value={{ user, token, isLoading, login, register, logout, authHeader, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

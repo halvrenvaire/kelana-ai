@@ -16,6 +16,7 @@ export default function Sidebar() {
 
   const navItems = [
     { href: "/dashboard", label: "Dashboard", icon: "dashboard" },
+    { href: "/create-trip", label: "Create Trip", icon: "add_circle" },
     { href: "/assistant", label: "AI Assistant", icon: "smart_toy" },
     { href: "/history", label: "My Trips", icon: "luggage" },
     { href: "/settings", label: "Settings", icon: "settings" },

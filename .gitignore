@@ -5,3 +5,5 @@ venv/
 .neon
 node_modules/
 .neon
+.env.local
+backend/.env.local

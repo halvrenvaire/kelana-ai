@@ -13,20 +13,29 @@ interface Stats {
 }
 
 export default function DashboardPage() {
-  const { user, authHeader } = useAuth();
+  const { user, authHeader, token, refreshUser } = useAuth();
   const router = useRouter();
 
   const [stats, setStats] = useState<Stats>({ total_trips: 0, total_conversations: 0 });
   const [loading, setLoading] = useState(true);
 
+  // Fetch user if token exists but user is null
   useEffect(() => {
-    if (!user) {
+    if (token && !user) {
+      refreshUser();
+    }
+  }, [token, user, refreshUser]);
+
+  useEffect(() => {
+    if (!token) {
       router.push("/login");
       return;
     }
     
-    fetchStats();
-  }, [user, router]);
+    if (user) {
+      fetchStats();
+    }
+  }, [user, router, token]);
 
   async function fetchStats() {
     try {

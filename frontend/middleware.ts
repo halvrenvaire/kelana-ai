@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 // Halaman yang wajib login
-const PROTECTED = ["/", "/history", "/assistant"];
+const PROTECTED = ["/dashboard", "/create-trip", "/history", "/assistant"];
 
 // Halaman yang tidak boleh diakses kalau sudah login
 const AUTH_ONLY = ["/login", "/register"];
@@ -24,10 +24,10 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Sudah login → redirect ke / kalau buka /login atau /register
+  // Sudah login → redirect ke /dashboard kalau buka /login atau /register
   if (isAuthOnly && token) {
     const url = request.nextUrl.clone();
-    url.pathname = "/";
+    url.pathname = "/dashboard";
     return NextResponse.redirect(url);
   }
 
