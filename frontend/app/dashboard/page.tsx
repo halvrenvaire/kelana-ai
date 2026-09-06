@@ -49,17 +49,24 @@ export default function DashboardPage() {
   const [errorMsg, setErrorMsg] = useState<string>("");
 
   useEffect(() => {
+    console.log("Dashboard useEffect - authLoading:", authLoading, "user:", user, "statsLoaded:", statsLoaded);
+    
     // Jangan load stats kalau masih checking auth
-    if (authLoading) return;
+    if (authLoading) {
+      console.log("Waiting for auth...");
+      return;
+    }
     
     // Redirect ke login kalau belum login
     if (!user) {
+      console.log("No user, redirecting to login");
       router.push("/login");
       return;
     }
     
     // Load stats kalau udah login DAN belum pernah load
     if (!statsLoaded) {
+      console.log("Loading stats...");
       loadStats();
     }
   }, [user, authLoading, statsLoaded]);
