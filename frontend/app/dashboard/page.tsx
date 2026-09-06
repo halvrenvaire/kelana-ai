@@ -36,7 +36,7 @@ export interface FormValues {
 }
 
 export default function DashboardPage() {
-  const { authHeader, user } = useAuth();
+  const { authHeader, user, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
   const [stats, setStats] = useState<Stats>({ total_trips: 0, total_conversations: 0, this_month_trips: 0 });
@@ -48,10 +48,18 @@ export default function DashboardPage() {
   const [errorMsg, setErrorMsg] = useState<string>("");
 
   useEffect(() => {
-    if (user) {
-      loadStats();
+    // Jangan load stats kalau masih checking auth
+    if (authLoading) return;
+    
+    // Redirect ke login kalau belum login
+    if (!user) {
+      router.push("/login");
+      return;
     }
-  }, [user]);
+    
+    // Load stats kalau udah login
+    loadStats();
+  }, [user, authLoading, router]);
 
   async function loadStats() {
     try {
@@ -148,16 +156,17 @@ export default function DashboardPage() {
     setErrorMsg("");
   }
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
-      <div className="flex min-h-screen bg-[#f5f7fa]">
-        <Sidebar />
-        <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#40c2fd] mx-auto mb-4"></div>
-            <p className="text-[#76777d]">Loading...</p>
+      <div className="flex min-h-screen bg-[#faf8f5] items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-[#0ea5e9] to-[#06b6d4] flex items-center justify-center animate-pulse">
+            <span className="material-symbols-outlined text-white text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+              flight_takeoff
+            </span>
           </div>
-        </main>
+          <p className="text-[#64748b] font-semibold">Loading dashboard...</p>
+        </div>
       </div>
     );
   }
