@@ -2,7 +2,7 @@ annotated-doc==0.0.5
 annotated-types==0.8.0
 anyio==4.14.2
 click==8.4.2
-fastapi[standard]==0.155.0
+fastapi[standard]
 greenlet==3.5.5
 h11==0.16.0
 idna==3.18
