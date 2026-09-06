@@ -41,6 +41,7 @@ export default function DashboardPage() {
 
   const [stats, setStats] = useState<Stats>({ total_trips: 0, total_conversations: 0, this_month_trips: 0 });
   const [loading, setLoading] = useState(true);
+  const [statsLoaded, setStatsLoaded] = useState(false);
 
   // Trip form states
   const [appState, setAppState] = useState<AppState>("idle");
@@ -57,9 +58,11 @@ export default function DashboardPage() {
       return;
     }
     
-    // Load stats kalau udah login
-    loadStats();
-  }, [user, authLoading, router]);
+    // Load stats kalau udah login DAN belum pernah load
+    if (!statsLoaded) {
+      loadStats();
+    }
+  }, [user, authLoading, statsLoaded]);
 
   async function loadStats() {
     try {
@@ -87,8 +90,10 @@ export default function DashboardPage() {
         total_conversations: convs.length,
         this_month_trips: thisMonth.length,
       });
+      setStatsLoaded(true); // Mark sebagai sudah loaded
     } catch (error) {
       console.error("Failed to load stats:", error);
+      setStatsLoaded(true); // Tetap mark loaded meski error biar ga infinite loop
     } finally {
       setLoading(false);
     }
