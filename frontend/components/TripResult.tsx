@@ -32,7 +32,7 @@ function renderMarkdown(text: string): string {
 export default function TripResult({ trip, onReset }: TripResultProps) {
   const [copied, setCopied] = useState(false);
 
-  const cat = CATEGORY_CONFIG[trip.category?.toLowerCase()] ?? CATEGORY_CONFIG["standard"];
+  const cat = CATEGORY_CONFIG[trip.category?.toLowerCase() ?? "standard"] ?? CATEGORY_CONFIG["standard"];
 
   function handleCopy() {
     if (!trip.ai_recommendation) return;
@@ -66,8 +66,8 @@ export default function TripResult({ trip, onReset }: TripResultProps) {
           </div>
           <div className="flex flex-wrap gap-3 border-t border-[#eceef0] pt-4 z-10">
             {[
-              { icon: "calendar_month", text: `${trip.days} Days` },
-              { icon: "payments",       text: `${fmt(trip.budget)} Budget` },
+              { icon: "calendar_month", text: `${trip.days ?? 0} Days` },
+              { icon: "payments",       text: `${fmt(trip.budget ?? 0)} Budget` },
               { icon: "hotel_class",    text: cat.label },
             ].map((item) => (
               <div key={item.text} className="flex items-center gap-2 bg-[#f2f4f6] px-3 py-2 rounded-lg">
@@ -87,9 +87,9 @@ export default function TripResult({ trip, onReset }: TripResultProps) {
             <h3 className="font-bold text-[#191c1e] mb-3">Budget Breakdown</h3>
             <div className="space-y-2">
               {[
-                { label: "Total Budget", value: fmt(trip.budget) },
-                { label: "Per Day",      value: fmt(trip.daily_budget), highlight: true },
-                { label: "Duration",     value: `${trip.days} days` },
+                { label: "Total Budget", value: fmt(trip.budget ?? 0) },
+                { label: "Per Day",      value: fmt((trip.budget && trip.days) ? trip.budget / trip.days : 0), highlight: true },
+                { label: "Duration",     value: `${trip.days ?? 0} days` },
               ].map((r) => (
                 <div key={r.label} className="flex justify-between items-center">
                   <span className="text-xs text-[#45464d]">{r.label}</span>

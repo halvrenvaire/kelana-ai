@@ -44,9 +44,9 @@ function fmt(n: number) {
 }
 
 export default function TripCard({ trip }: TripCardProps) {
-  const icon     = getIcon(trip.destination);
-  const cat      = CATEGORY_CONFIG[trip.category?.toLowerCase()] ?? { label: trip.category, cls: "badge badge-mid" };
-  const style    = STYLE_CONFIG[trip.travel_style?.toLowerCase() ?? "balanced"] ?? { label: trip.travel_style, emoji: "✈️" };
+  const icon     = getIcon(trip.destination ?? "");
+  const cat      = CATEGORY_CONFIG[trip.category?.toLowerCase() ?? "standard"] ?? { label: trip.category ?? "Standard", cls: "badge badge-mid" };
+  const style    = STYLE_CONFIG[trip.travel_style?.toLowerCase() ?? "balanced"] ?? { label: trip.travel_style ?? "Balanced", emoji: "✈️" };
   const hasAI    = !!trip.ai_recommendation;
 
   return (
@@ -72,9 +72,9 @@ export default function TripCard({ trip }: TripCardProps) {
       {/* Stats */}
       <div className="grid grid-cols-3 divide-x divide-[#eceef0] border-b border-[#eceef0]">
         {[
-          { label: "Durasi", value: String(trip.days), unit: "hari" },
-          { label: "Budget", value: fmt(trip.budget),  unit: "total" },
-          { label: "Per Hari", value: fmt(trip.daily_budget), unit: "avg", highlight: true },
+          { label: "Durasi", value: String(trip.days ?? 0), unit: "hari" },
+          { label: "Budget", value: fmt(trip.budget ?? 0),  unit: "total" },
+          { label: "Per Hari", value: fmt((trip.budget && trip.days) ? trip.budget / trip.days : 0), unit: "avg", highlight: true },
         ].map((s) => (
           <div key={s.label} className="px-3 py-3 text-center">
             <p className="text-[10px] text-[#76777d] uppercase tracking-wide font-medium">{s.label}</p>
