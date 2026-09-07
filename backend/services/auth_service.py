@@ -1,12 +1,7 @@
 import os
 from datetime import datetime, timedelta, timezone
-
-import jwt
-from jwt.exceptions import PyJWTError
-
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-
 # ── Config ────────────────────────────────────────────────────
 SECRET_KEY      = os.getenv("SECRET_KEY", "kelana-ai-secret-key-change-in-prod")
 ALGORITHM       = "HS256"
