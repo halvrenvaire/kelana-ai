@@ -16,3 +16,5 @@ typing-inspection==0.4.4
 typing_extensions==4.16.0
 uvicorn==0.52.3
 boto3==1.43.56
+python-jose[cryptography]
+passlib[bcrypt]
