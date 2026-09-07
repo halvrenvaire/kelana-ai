@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { TripData } from "@/app/page";
+import type { TripData } from "@/types/trip";
 
 interface TripResultProps { trip: TripData; onReset: () => void; }
 

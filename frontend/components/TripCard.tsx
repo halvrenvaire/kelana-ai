@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { TripData } from "@/app/page";
+import type { TripData } from "@/types/trip";
 
 interface TripCardProps { trip: TripData; }
 

@@ -6,25 +6,9 @@ import Sidebar from "@/components/layout/Sidebar";
 import TripForm from "@/components/TripForm";
 import TripResult from "@/components/TripResult";
 import { useAuth } from "@/context/AuthContext";
+import type { TripData, FormValues } from "@/types/trip";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
-
-export interface FormValues {
-  destination: string;
-  days: number;
-  budget: number;
-  travel_style: string;
-}
-
-export interface TripData {
-  id: number;
-  destination: string;
-  days: number;
-  budget: number;
-  travel_style: string;
-  itinerary: string;
-  created_at: string;
-}
 
 export default function CreateTripPage() {
   const { authHeader, user } = useAuth();

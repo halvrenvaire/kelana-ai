@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { FormValues } from "@/app/page";
+import type { FormValues } from "@/types/trip";
 
 interface TripFormProps {
   onSubmit: (values: FormValues) => void;
