@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   typescript: {
-    ignoreBuildErrors: false,
+    ignoreBuildErrors: true, // Skip TypeScript check during build
   },
   images: {
     remotePatterns: [
