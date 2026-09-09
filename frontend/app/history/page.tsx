@@ -7,7 +7,7 @@ import TripCard from "@/components/TripCard";
 import { useAuth } from "@/context/AuthContext";
 import type { TripData } from "@/types/trip";
 
-const API_BASE   = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const API_BASE   = process.env.NEXT_PUBLIC_API_URL ?? "https://kelana-ai-e20bf1c3.fastapicloud.dev";
 const PAGE_SIZE  = 9;
 
 type FetchState = "loading" | "ok" | "error";

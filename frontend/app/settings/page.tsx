@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Sidebar from "@/components/layout/Sidebar";
 import { useAuth } from "@/context/AuthContext";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "https://kelana-ai-e20bf1c3.fastapicloud.dev";
 
 interface UserProfile {
   id: number;
