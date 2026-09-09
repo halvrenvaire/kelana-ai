@@ -23,6 +23,7 @@ app.add_middleware(
         "http://localhost:3000",
         "http://127.0.0.1:3000",
         "https://kelana-o7zxk-9i19-halvrenvaire.vercel.app",
+        "https://klanernal-vercel.app",
         "https://*.vercel.app",  # Allow all Vercel deployments
     ],
     allow_credentials=True,
