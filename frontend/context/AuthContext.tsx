@@ -9,7 +9,7 @@ import {
   type ReactNode,
 } from "react";
 
-const API_BASE   = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const API_BASE   = process.env.NEXT_PUBLIC_API_URL ?? "https://kelana-ai-e20bf1c3.fastapicloud.dev";
 const TOKEN_KEY  = "kelana_token";
 
 export interface AuthUser {
