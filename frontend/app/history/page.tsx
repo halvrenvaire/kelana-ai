@@ -69,7 +69,7 @@ export default function HistoryPage() {
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <span className="text-5xl mb-4">⚠️</span>
             <h2 className="text-lg font-bold text-[#191c1e]">Gagal memuat data</h2>
-            <p className="text-sm text-[#45464d] mt-1 mb-6">Pastikan backend berjalan di <code className="bg-[#eceef0] px-1.5 py-0.5 rounded text-xs">localhost:8000</code></p>
+            <p className="text-sm text-[#45464d] mt-1 mb-6">Pastikan backend berjalan di <code className="bg-[#eceef0] px-1.5 py-0.5 rounded text-xs">https://kelana-ai-e20bf1c3.fastapicloud.dev</code></p>
             <button onClick={() => window.location.reload()} className="px-5 py-2.5 rounded-xl bg-[#00668a] text-white text-sm font-semibold hover:bg-[#004d6a] transition">
               Coba lagi
             </button>
