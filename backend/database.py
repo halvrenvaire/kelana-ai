@@ -10,7 +10,18 @@ load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 # engine = kolam koneksi ke database
-engine = create_engine(DATABASE_URL)
+# Add pool settings for better connection management with Neon
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,  # Verify connections before using them
+    pool_recycle=300,     # Recycle connections after 5 minutes
+    pool_size=5,          # Maximum number of connections
+    max_overflow=10,      # Allow up to 10 extra connections
+    connect_args={
+        "connect_timeout": 10,
+        "options": "-c timezone=utc"
+    }
+)
 
 # SessionLocal = pabrik pembuat sesi database
 SessionLocal = sessionmaker(bind=engine, autoflush=False)
