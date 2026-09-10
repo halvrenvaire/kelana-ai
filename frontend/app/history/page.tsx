@@ -82,7 +82,7 @@ export default function HistoryPage() {
             <span className="text-6xl mb-4">🧳</span>
             <h2 className="text-lg font-bold text-[#191c1e]">Belum ada perjalanan</h2>
             <p className="text-sm text-[#45464d] mt-1 mb-6">Buat rencana perjalanan pertamamu sekarang!</p>
-            <a href="/" className="px-5 py-2.5 rounded-xl ai-gradient text-white text-sm font-semibold hover:opacity-90 transition flex items-center gap-2">
+            <a href="/create-trip" className="px-5 py-2.5 rounded-xl ai-gradient text-white text-sm font-semibold hover:opacity-90 transition flex items-center gap-2">
               <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
               Buat Perjalanan
             </a>

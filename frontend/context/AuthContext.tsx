@@ -55,7 +55,7 @@ function clearToken() {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser]         = useState<AuthUser | null>(null);
   const [token, setToken]       = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false); // Changed from true to false
+  const [isLoading, setIsLoading] = useState(true); // Changed from true to false
 
   // Restore session on mount
   useEffect(() => {
