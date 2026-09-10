@@ -20,7 +20,7 @@ export default function Features() {
   return (
     <div className="space-y-3">
       <p className="text-center text-xs font-semibold text-[#76777d] uppercase tracking-widest">
-        Why KelanaAI?
+        Why KelanaTrip AI?
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {FEATURES.map((f) => (

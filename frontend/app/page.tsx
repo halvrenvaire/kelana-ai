@@ -33,7 +33,7 @@ export default function LandingPage() {
               flight_takeoff
             </span>
           </div>
-          <h1 className="text-2xl font-bold text-white">KelanaAI</h1>
+          <h1 className="text-2xl font-bold text-white">KelanaTrip AI</h1>
         </div>
         <div className="flex items-center gap-3">
           <Link
@@ -72,7 +72,7 @@ export default function LandingPage() {
           </h1>
 
           <p className="text-xl sm:text-2xl text-white/90 mb-12 leading-relaxed max-w-3xl mx-auto">
-            KelanaAI membantu Anda merencanakan liburan impian dengan rekomendasi destinasi, 
+            KelanaTrip AI membantu Anda merencanakan liburan impian dengan rekomendasi destinasi, 
             itinerary, dan budget yang dipersonalisasi menggunakan teknologi AI terdepan.
           </p>
 
@@ -177,7 +177,7 @@ export default function LandingPage() {
       <footer className="relative z-10 border-t border-white/10 py-8">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <p className="text-white/60 text-sm">
-            © 2026 KelanaAI. Powered by AWS Bedrock. All rights reserved.
+            © 2026 KelanaTrip AI. Powered by AWS Bedrock. All rights reserved.
           </p>
         </div>
       </footer>

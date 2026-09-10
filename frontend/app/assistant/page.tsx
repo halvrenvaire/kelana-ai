@@ -46,7 +46,7 @@ export default function AssistantPage() {
   const [messages, setMessages]     = useState<Message[]>([
     {
       id: 0, role: "assistant",
-      text: "Halo! Saya KelanaAI Assistant. Tanya apa saja tentang perjalananmu — Bali, Tokyo, Istanbul, tips budget, dan lainnya. Jawaban saya berdasarkan dokumen travel terpercaya. 🌍",
+      text: "Halo! Saya KelanaTrip AI Assistant. Tanya apa saja tentang perjalananmu — Bali, Tokyo, Istanbul, tips budget, dan lainnya. Jawaban saya berdasarkan dokumen travel terpercaya. 🌍",
       timestamp: new Date(),
     },
   ]);
@@ -348,7 +348,7 @@ export default function AssistantPage() {
                             <span className="w-2 h-2 bg-[#76777d] rounded-full animate-bounce [animation-delay:150ms]" />
                             <span className="w-2 h-2 bg-[#76777d] rounded-full animate-bounce [animation-delay:300ms]" />
                           </div>
-                          <span className="text-xs text-[#76777d] italic">KelanaAI sedang mengetik…</span>
+                          <span className="text-xs text-[#76777d] italic">KelanaTrip AI sedang mengetik…</span>
                         </div>
                       ) : (
                         <>

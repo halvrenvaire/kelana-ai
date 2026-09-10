@@ -34,7 +34,7 @@ export default function Sidebar() {
             </span>
           </div>
           <div>
-            <h1 className="text-xl font-bold group-hover:text-[#06b6d4] transition">KelanaAI</h1>
+            <h1 className="text-xl font-bold group-hover:text-[#06b6d4] transition">KelanaTrip AI</h1>
             <p className="text-xs text-white/50 font-medium">Travel Planner</p>
           </div>
         </Link>

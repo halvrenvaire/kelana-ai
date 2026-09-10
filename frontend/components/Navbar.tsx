@@ -35,7 +35,7 @@ export default function Navbar() {
           {/* Brand */}
           <Link href="/" className="flex items-center gap-2">
             <span className="material-symbols-outlined text-[#00668a] text-2xl">explore</span>
-            <span className="text-xl font-bold text-[#191c1e] tracking-tight">KelanaAI</span>
+            <span className="text-xl font-bold text-[#191c1e] tracking-tight">KelanaTrip AI</span>
           </Link>
 
           {/* Desktop nav */}

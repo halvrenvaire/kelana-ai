@@ -1,4 +1,4 @@
-# KelanaAI
+# KelanaTrip AI
 
 **AI Travel Planner** — dibangun bertahap dari script Python sederhana menjadi full-stack web app dengan REST API, PostgreSQL, Amazon Bedrock, dan Next.js.
 
@@ -6,7 +6,7 @@
 
 ## Tentang Proyek
 
-KelanaAI adalah aplikasi perencana perjalanan yang dikembangkan selama bootcamp MAIN Phase 2. Dibangun bertahap tiap sesi dengan arsitektur berlapis yang memisahkan business logic, persistence layer, dan presentation layer — kini lengkap dengan antarmuka web modern berbasis Next.js.
+KelanaTrip AI adalah aplikasi perencana perjalanan yang dikembangkan selama bootcamp MAIN Phase 2. Dibangun bertahap tiap sesi dengan arsitektur berlapis yang memisahkan business logic, persistence layer, dan presentation layer — kini lengkap dengan antarmuka web modern berbasis Next.js.
 
 ---
 

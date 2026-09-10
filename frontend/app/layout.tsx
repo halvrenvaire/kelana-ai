@@ -12,13 +12,13 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "KelanaAI — Plan Your Journey with AI",
+  title: "KelanaTrip AI — Plan Your Journey with AI",
   description:
-    "KelanaAI creates personalized daily itineraries within your budget, powered by Amazon Bedrock.",
-  keywords: ["travel planner", "AI itinerary", "kelana ai", "rencana perjalanan"],
+    "KelanaTrip AI creates personalized daily itineraries within your budget, powered by Amazon Bedrock.",
+  keywords: ["travel planner", "AI itinerary", "kelana trip ai", "rencana perjalanan"],
   authors: [{ name: "Ishak Halawa" }],
   openGraph: {
-    title: "KelanaAI — Plan Your Journey with AI",
+    title: "KelanaTrip AI — Plan Your Journey with AI",
     description: "Personalized itineraries within your budget, powered by AI.",
     type: "website",
   },

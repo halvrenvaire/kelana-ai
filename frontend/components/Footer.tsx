@@ -8,12 +8,12 @@ export default function Footer() {
         {/* Brand */}
         <div className="flex items-center gap-2">
           <span className="material-symbols-outlined text-[#00668a]">explore</span>
-          <span className="text-base font-bold text-[#191c1e]">KelanaAI</span>
+          <span className="text-base font-bold text-[#191c1e]">KelanaTrip AI</span>
         </div>
 
         {/* Copyright */}
         <p className="text-sm text-[#45464d] text-center opacity-80 flex flex-col md:flex-row items-center gap-2">
-          © 2026 KelanaAI. Built with Next.js, FastAPI &amp; Amazon Bedrock.
+          © 2026 KelanaTrip AI. Built with Next.js, FastAPI &amp; Amazon Bedrock.
           <span className="inline-flex items-center gap-1 bg-[#ECFEFF] text-[#0891B2] px-2 py-0.5 rounded text-xs border border-[#CFFAFE] font-medium">
             <span className="material-symbols-outlined text-xs">auto_awesome</span>
             Powered by Amazon Bedrock
